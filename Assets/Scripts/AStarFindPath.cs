@@ -9,7 +9,6 @@ public class AStarFindPath : MonoBehaviour {
 
     //起点坐标
     GridScr StarScr;
-
     //终点坐标
     GridScr EndScr;
     //开启列表和关闭列表
@@ -21,12 +20,17 @@ public class AStarFindPath : MonoBehaviour {
         _astar = this;
     }
 
-    //寻路方法
-    public void FindingPath(GridScr sele01,GridScr sele02)
+    public AStarFindPath(GridScr select01, GridScr select02)
     {
-        StarScr = sele01;
-        EndScr = sele02;
+        StarScr = select01;
+        EndScr = select02;
 
+        FindingPath();
+    }
+
+    //寻路方法
+    void FindingPath()
+    {
         openSet.Add(StarScr);
 
         while (openSet.Count >0 )
@@ -46,9 +50,9 @@ public class AStarFindPath : MonoBehaviour {
             closeSet.Add(curNode);
 
             //找到目标点
-            if (curNode == sele02)
+            if (curNode == EndScr)
             {
-                generatePath(sele01, sele02);
+                generatePath(StarScr, EndScr);
                 return;
             }
 
@@ -68,7 +72,7 @@ public class AStarFindPath : MonoBehaviour {
                     // 更新与开始节点的距离
                     item.gCost = newCost;
                     // 更新与终点的距离
-                    item.hCost = getDistanceGrid(item, sele02);
+                    item.hCost = getDistanceGrid(item, EndScr);
                     // 更新父节点为当前选定的节点
                     item.parent = curNode;
                     // 如果节点是新加入的，将它加入打开列表中
@@ -79,7 +83,7 @@ public class AStarFindPath : MonoBehaviour {
                 }
             }
         }
-        generatePath(sele01, null);
+        generatePath(StarScr, null);
     }
 
     // 生成路径
@@ -97,17 +101,16 @@ public class AStarFindPath : MonoBehaviour {
             // 反转路径
             path.Reverse();
         }
-        // 更新路径
-        GridController._gridcontroller.updatePath(path);
+
     }
 
     //获取两个节点之间的距离
-    int getDistanceGrid(GridScr a,GridScr b)
+    int getDistanceGrid(GridScr start,GridScr end)
     {
-        int cntX = Mathf.Abs(a.Gridx - b.Gridx);
-        int cntY = Mathf.Abs(a.Gridy - b.Gridy);
-        // 判断到底是那个轴相差的距离更远
-        return cntX + cntY;
+        int x = Mathf.Abs(start.Gridx - end.Gridx);
+        int y = Mathf.Abs(start.Gridy + end.Gridy);
+        //曼哈顿估价
+        return x * 14 + y * 14;
     }
 
 }

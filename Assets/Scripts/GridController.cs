@@ -43,11 +43,8 @@ public class GridController : MonoBehaviour {
     public GridScr Selected02;
     [HideInInspector]
     public AStarFindPath asr;
-    Route_pt[] result = null;
 
     private int[] ramNum; 
-
-
 
     void Awake()
     {
@@ -191,6 +188,7 @@ public class GridController : MonoBehaviour {
 
         //脚本设置
         GridScr scr = GridScrTransform[weizhi % MaxRowNum, weizhi / MaxColNum];
+        GridScrTransform[weizhi % MaxRowNum, weizhi / MaxColNum].chessmanObj = obj;
         //ChessmanScr Che = chessman.GetComponent<ChessmanScr>();
 
         //获取棋子颜色
@@ -202,16 +200,14 @@ public class GridController : MonoBehaviour {
     //移动棋子
     public void ChessmanMoveTo()
     {
-        AStarFindPath._astar.FindingPath(Selected01, Selected02);
-        Debug.Log(Selected01.Gridx + "," + Selected01.Gridy);
-        Debug.Log(Selected02.Gridx + "," + Selected02.Gridy);
+        GameObject sele01 = Selected01.gameObject;
+        GameObject obj = Selected01.chessmanObj;
 
-        for (int i = 0; i < pathObj.Count - 1; i++)
-        {
-            //移动物体
-            Debug.Log("移动游戏物体");
-        }
-
+        Selected02.chessmanObj = Instantiate(obj);
+        obj.transform.parent = sele01.transform;
+        obj.transform.localPosition = new Vector2(Selected02.Gridx, Selected02.Gridy);
+        Instantiate(obj);
+        Destroy(Selected01.chessmanObj);
     }
 
     //获取周围的网格
@@ -237,29 +233,6 @@ public class GridController : MonoBehaviour {
             }
         }
         return list;
-    }
-
-    //更新路径
-    public void updatePath(List<GridScr> lines)
-    {
-        int curListSize = pathObj.Count;
-        for (int i = 0, max = lines.Count; i < max; i++) 
-        {
-            if (i < curListSize) 
-            {
-                pathObj [i].transform.position = lines [i].pos;
-                pathObj [i].SetActive (true);
-            } 
-            else 
-            {
-                //GameObject obj = GameObject.Instantiate (Node, lines [i].pos, Quaternion.identity) as GameObject;
-                //obj.transform.SetParent (PathRange.transform);
-                //pathObj.Add (obj);
-            }
-        }
-        for (int i = lines.Count; i < curListSize; i++) {
-            pathObj [i].SetActive (false);
-        }
     }
 }
 

@@ -19,6 +19,8 @@ public class GridScr : MonoBehaviour {
         get { return gCost + hCost; }
     }
 
+    public GameObject chessmanObj;
+
     public GridScr parent;
 
     //记录颜色
